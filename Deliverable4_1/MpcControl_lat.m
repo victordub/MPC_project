@@ -79,8 +79,6 @@ classdef MpcControl_lat < MpcControlBase
             u = sdpvar(repmat(nu,1,N),repmat(1,1,N));
             umax = deg2rad(30);
             umin = deg2rad(-30);
-            xmax = [3.5 deg2rad(5)]';
-            xmin = [-0.5 deg2rad(-5)]';
 
             con = [];
             obj   = 0;
@@ -91,7 +89,8 @@ classdef MpcControl_lat < MpcControlBase
                 con = [con, F*x <= f];
                 con = [con, umin <= u{k}<= umax];
             end
-            con = [con, Ff*x <= ff];
+%             x = f_xs_us + A*(x-xs) + B*(u{N}-us);
+%             con = [con, Ff*x <= ff];
             obj = obj + (x-x_ref)'*Qf*(x-x_ref);
 
             % Replace this line and set u0 to be the input that you
