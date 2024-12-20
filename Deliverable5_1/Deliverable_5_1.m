@@ -1,9 +1,9 @@
+run("tube_mpc_sets.m");
+
 close all
 clear
 
 addpath('../car_project/')
-
-run("tube_mpc_sets.m");
 
 %% Define mpc
 Ts = 1/10;
@@ -14,10 +14,11 @@ sys = car.linearize(xs, us);
 [sys_lon, sys_lat] = car.decompose(sys);
 
 % Design MPC controller
-H_lat = 5; % Horizon length in seconds
+H_lat = 25; % Horizon length in seconds
 H_lon = H_lat;
 
 mpc_lat = MpcControl_lat(sys_lat, Ts, H_lat);
+%%
 mpc_lon = MpcControl_lon(sys_lon, Ts, H_lon);
 
 mpc = car.merge_lin_controllers(mpc_lon, mpc_lat);
@@ -34,7 +35,7 @@ params.myCar.x0 = [0 0 0 100/3.6]';
 params.myCar.u = @mpc.get_u;
 params.myCar.ref = ref;
 params.otherCar.model = car;
-params.otherCar.x0 = [15 0 0 otherRef]';
+params.otherCar.x0 = [10 0 0 otherRef]';
 params.otherCar.u = car.u_const(otherRef);
 result = simulate(params);
 visualization(car, result);

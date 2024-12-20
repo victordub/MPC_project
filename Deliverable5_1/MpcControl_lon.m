@@ -60,22 +60,25 @@ classdef MpcControl_lon < MpcControlBase
             m_tilde = U_tilde.b;
 
             u = sdpvar(repmat(nu,1,N),repmat(1,1,N));
+            Z = sdpvar(repmat(nx,1,N),repmat(1,1,N));
             %delta = sdpvar(repmat(1,1,N),repmat(1,1,N));
 
             con = [];
             obj   = 0;
 
             % initial conditions
-            delta0 = x0other - x0 - [x_safe;0];
-            delta = delta0;
-            for k = 1:N
-                delta = A*delta - B*u{k};
-                obj   = obj + delta'*Q*delta + u{k}'*R*u{k};
+            X0 = x0other - x0 - x_safe;
+            con = [con, E.A * (X0 - Z{1})  <= E.b];
+
+            for k = 1:N-1
+                con = [con, Z{k+1} == A*Z{k} - B*u{k}];
+
+                obj   = obj + Z{k}'*Q*Z{k} + u{k}'*R*u{k};
                 con = [con, M_tilde*u{k} <= m_tilde];
-                con = [con, F_tilde*delta <= f_tilde];
+                con = [con, F_tilde*Z{k} <= f_tilde];
             end
-            con = [con, Ff_tilde*delta <= ff_tilde];
-            obj = obj + delta'*Qf*delta;
+            %con = [con, Ff_tilde*Z{end} <= ff_tilde];
+            obj = obj + Z{end}'*Qf*Z{end};
 
             % Replace this line and set u0 to be the input that you
             % want applied to the system. Note that u0 is applied directly
@@ -83,7 +86,7 @@ classdef MpcControl_lon < MpcControlBase
             % offsets resulting from the linearization.
             % If you want to use the delta formulation make sure to
             % substract mpc.xs/mpc.us accordingly.
-            con = con + ( u0 == K*(x0 - delta0) + u{1} );
+            con = con + ( u0 == K*(X0 - Z{1}) + u{1} );%
 
             % Pass here YALMIP sdpvars which you want to debug. You can
             % then access them when calling your mpc controller like

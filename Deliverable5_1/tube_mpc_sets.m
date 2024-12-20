@@ -1,3 +1,5 @@
+clear
+
 addpath('../car_project/')
 
 Ts = 1/10;
@@ -13,8 +15,8 @@ sysl_lond = c2d(sys_lon, Ts);
 
 [nx, nu] = size(B);
 
-Q = 1*eye(nx);
-R = 10;
+Q = 10*eye(nx);
+R = 0.1;
 
 [K,Qf,~] = dlqr(A,-B,Q,R);
 K = -K;
@@ -74,6 +76,7 @@ while 1
 end
 [Ff, ff] = double(Xf);
 Xf_delta = Polyhedron(Ff, ff);
+E = F_inf;
 
-save('tube_mpc_data.mat', 'Xf_delta', 'X_tilde', 'U_tilde', 'x_safe', 'K', 'Q', 'R', 'Qf');
+save('tube_mpc_data.mat', 'Xf_delta', 'X_tilde', 'U_tilde', 'x_safe', 'K', 'Q', 'R', 'Qf', 'E');
 clear
