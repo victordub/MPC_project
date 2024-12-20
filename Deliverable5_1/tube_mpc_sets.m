@@ -72,5 +72,8 @@ while 1
         break
     end
 end
+[Ff, ff] = double(Xf);
+Xf_delta = Polyhedron(Ff, ff);
 
-save('tube_mpc_data.mat', 'F_inf', 'Xf', 'Qf', 'K', 'X_tilde', 'U_tilde');
+save('tube_mpc_data.mat', 'Xf_delta', 'X_tilde', 'U_tilde', 'x_safe', 'K', 'Q', 'R', 'Qf');
+clear
