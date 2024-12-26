@@ -1,4 +1,5 @@
 clear
+close all
 
 addpath('../car_project/')
 
@@ -15,7 +16,7 @@ sysl_lond = c2d(sys_lon, Ts);
 
 [nx, nu] = size(B);
 
-Q = 10*eye(nx);
+Q = diag([1 1000]);
 R = 0.1;
 
 [K,Qf,~] = dlqr(A,-B,Q,R);
@@ -78,5 +79,6 @@ end
 Xf_delta = Polyhedron(Ff, ff);
 E = F_inf;
 
-save('tube_mpc_data.mat', 'Xf_delta', 'X_tilde', 'U_tilde', 'x_safe', 'K', 'Q', 'R', 'Qf', 'E');
+plot(U_tilde)
+save('tube_mpc_data.mat', 'Xf_delta', 'X_tilde', 'U_tilde', 'x_safe', 'K', 'Qf', 'E');
 clear

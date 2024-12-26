@@ -41,6 +41,9 @@ classdef MpcControl_lon < MpcControlBase
 
             A = mpc.A;
             B = mpc.B;
+
+            Q = 10*eye(nx);
+            R = 1;
             
             % NOTE: The matrices mpc.A, mpc.B, mpc.C and mpc.D
             %       are the DISCRETE-TIME MODEL of your system.
